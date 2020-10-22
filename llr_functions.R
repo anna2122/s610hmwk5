@@ -10,6 +10,7 @@
 #' @param z (numeric) vector, can be of a different length
 #' @param omega (numeric) must be a scalar
 #' @return (numeric) vector of the same length as z
+
 llr <- function(x, y, z, omega) {
   fits <- sapply(z, compute_f_hat, x, y, omega)
   return(fits)
@@ -31,6 +32,7 @@ compute_f_hat <- function(z, x, y, omega) {
 #' @param x (numeric) vector of arbitrary length
 #' @param omega (numeric) must be a scalar
 #' @return (numeric) a diagonal matrix
+
 make_weight_matrix <- function(z, x, omega) {
   r <- abs(x - z) / omega  # this is a vector of the same length as x
   w <- sapply(r, W)  # this is a vector of the same length as x and r

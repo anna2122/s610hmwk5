@@ -5,11 +5,46 @@
 # TO RUN: testthat::test_dir('.')
 
 # --- setup --- #
-
 # load package functions and functions we want to test
 library(testthat)
-import::here(compute_f_hat, llr, make_predictor_matrix, make_weight_matrix, W,
-             .from = 'llr_functions.R')
+
+#import::here(compute_f_hat, llr, make_predictor_matrix, make_weight_matrix, W,
+             #.from = 'C:\\Users\\Aining\\s610hmwk5\\llr_functions.R')
+# could not get import to work
+
+# manually copy in functions
+llr <- function(x, y, z, omega) {
+  fits <- sapply(z, compute_f_hat, x, y, omega)
+  return(fits)
+}
+
+compute_f_hat <- function(z, x, y, omega) {
+  Wz <- make_weight_matrix(z, x, omega)
+  X <- make_predictor_matrix(x)
+  f_hat <- c(1, z) %*% solve(t(X) %*% Wz %*% X) %*% t(X) %*% Wz %*% y
+  return(f_hat)
+}
+
+make_weight_matrix <- function(z, x, omega) {
+  r <- abs(x - z) / omega  # this is a vector of the same length as x
+  w <- sapply(r, W)  # this is a vector of the same length as x and r
+  Wz <- diag(w)  # this is a diagonal matrix with elements from w
+  return(Wz)
+}
+
+W <- function(r) {
+  if (abs(r) < 1) {
+    return((1 - abs(r) ** 3) ** 3)
+  } else {
+    return(0)
+  }
+}
+
+make_predictor_matrix <- function(x) {
+  n <- length(x)
+  return(cbind(rep(1, n), x))
+}
+
 
 context("Check local linear regression function")
 
@@ -55,3 +90,4 @@ test_that("make_predictor_matrix works on simple cases", {
   # second column is x
   expect_equal(X[, 2], x)
 })
+x
