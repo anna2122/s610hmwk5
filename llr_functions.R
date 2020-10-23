@@ -13,7 +13,8 @@ llr <- function(x, y, z, omega) {
 compute_f_hat <- function(z, x, y, omega) {
   w <- make_weight_matrix(z, x, omega)
   X <- make_predictor_matrix(x)
-  f_hat <- c(1, z) %*% solve(t(X) %*% apply(X, 2, "*", rep(w))) %*% t(X) %*% t(t(w*y))
+  f_hat <- c(1, z) %*% solve(t(X) %*% apply(X, 2, "*", rep(w))) %*% t(X) 
+  f_hat = c(1, z) %*% solve(t(X) %*% sweep(X, 1, w, "*")) %*% t(X) %*% t(t(w*y))
   return(f_hat)
 }
 
